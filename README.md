@@ -1,4 +1,4 @@
-# OAuth2 Discord Bot (Warden Replacement)
+# Protector IL Bot Source
 
 This project is a Discord bot that integrates OAuth2 authentication and uses Prisma to interact with a MySQL database. It serves as a replacement for Warden with improvements in performance and scalability.
 

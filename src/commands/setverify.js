@@ -26,7 +26,6 @@ class UserCommand extends Command {
 	async chatInputRun(interaction) {
 		const verifiedRole = interaction.options.getRole("verified_role");
 
-		// Update or create the server config with the verified role ID
 		await prisma.serverConfig.upsert({
 			where: {
 				guild_id: interaction.guildId
@@ -37,15 +36,14 @@ class UserCommand extends Command {
 			create: {
 				guild_id: interaction.guildId,
 				verified_role_id: verifiedRole.id,
-				logs_channel_id: "" // Adding default value for required field
+				logs_channel_id: ""
 			}
 		});
 
 		const imagePath = path.join(__dirname, '..', 'images', 'verifyYourselfPic.png');
 		const attachment = new Discord.AttachmentBuilder(imagePath, { name: 'verifyYourselfPic.png' });
 
-		// Create the OAuth URL with the guild ID in the state parameter
-		const baseOAuthUrl = config.oauth_link.split('&state=')[0]; // Split at state if it exists
+		const baseOAuthUrl = config.oauth_link.split('&state=')[0];
 		const oauthUrlWithState = `${baseOAuthUrl}&state=${interaction.guildId}`;
 
 		const embed = new Discord.EmbedBuilder()

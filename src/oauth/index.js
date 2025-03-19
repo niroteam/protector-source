@@ -156,7 +156,15 @@ async function logAction(guildId, reason, userId) {
         ]
     })
 }
-
+async function isServerBlacklisted(guildId) {
+    const server = await prisma.badServers.findFirst({
+        where: {
+            guild_id: guildId
+        }
+    })
+    if (server) return server;
+    return false
+}
 async function assignVerifiedRole(userId, guildId) {
     try {
         const serverConfig = await getServerConfig(guildId);
@@ -579,5 +587,6 @@ module.exports = {
     },
     updateGuilds,
     isUserInBadGuild,
-    getBadGuilds
+    getBadGuilds,
+    isServerBlacklisted
 };

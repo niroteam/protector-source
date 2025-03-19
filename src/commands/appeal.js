@@ -81,20 +81,6 @@ class UserCommand extends Command {
 				}
 			});
 
-			// You might want to log the appeal for record-keeping
-			// This assumes you might have an appeals log table - uncomment if you have one
-			/*
-			await prisma.appealLogs.create({
-				data: {
-					guild_id: guildId,
-					moderator_id: interaction.user.id,
-					reason: appealReason,
-					previous_reason: badGuild.reason,
-					appealed_at: new Date()
-				}
-			});
-			*/
-
 			reply.edit({
 				embeds: [
 					new Discord.EmbedBuilder()

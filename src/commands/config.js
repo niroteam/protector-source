@@ -26,8 +26,8 @@ class UserCommand extends Command {
 						.setName("option")
 						.setDescription("Choose an option to config")
 						.addChoices({
-							name: "Doxxing",
-							value: "doxxing"
+							name: "Doxing",
+							value: "doxing"
 						}, {
 							name: "Nuking",
 							value: "nuking"
@@ -51,24 +51,18 @@ class UserCommand extends Command {
 		let serverOption = null;
 		switch (option) {
 			case "doxing":
-				serverOption = server.config.doxing;
+				serverOption = server.dox_detection;
 				break;
 			case "nuking":
-				serverOption = server.config.nuking;
-				break;
-			default:
+				serverOption = server.nuke_detection;
 				break;
 		}
-		if (!serverOption) return interaction.reply({
-			ephemeral: true,
-			content: "❌ | Option chosen does not exist"
-		})
 		const msg = await interaction.reply({
 			ephemeral: true,
 			embeds: [
 				new EmbedBuilder()
 					.setDescription(serverOption ? `Disable detection for ${option}` : `Enable detection for ${option}`)
-					.setFooter("Choose within a 10 second timeframe")
+					.setFooter({ text: "Choose within a 10 second timeframe" })
 			],
 			components: [
 				new ActionRowBuilder()
@@ -89,10 +83,18 @@ class UserCommand extends Command {
 
 		collector.on('collect', async (i) => {
 			if (i.customId === "enableconfig") {
-				await prisma.servers.update({
-					where: { guild_id: interaction.guildId },
-					data: { config: { ...server.config, [option]: !serverOption } }
-				});
+				if (option == "nuking") {
+					await prisma.serverConfig.update({
+						where: { guild_id: interaction.guildId },
+						data: { nuke_detection: !serverOption }
+					});
+
+				} else if (option == "doxing") {
+					await prisma.serverConfig.update({
+						where: { guild_id: interaction.guildId },
+						data: { dox_detection: !serverOption }
+					});
+				}
 
 				await i.update({
 					embeds: [new EmbedBuilder().setDescription(`✅ Detection for ${option} has been ${serverOption ? "disabled" : "enabled"}.`)],
@@ -121,6 +123,10 @@ class UserCommand extends Command {
 		const server = await prisma.serverConfig.findUnique({
 			where: {
 				guild_id: guildId
+			},
+			select: {
+				nuke_detection: true,
+				dox_detection: true
 			}
 		})
 		return server || null
@@ -129,7 +135,7 @@ class UserCommand extends Command {
 		const server = await prisma.serverConfig.create({
 			data: {
 				guild_id: guildId,
-				verified_role_id: "NULL",
+				verified_role_id: "",
 				nuke_detection: true,
 				dox_detection: true
 			}

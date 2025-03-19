@@ -144,7 +144,7 @@ class UserEvent extends Listener {
 			const server = await prisma.serverConfig.create({
 				data: {
 					guild_id: guildId,
-					verified_role_id: "NULL",
+					verified_role_id: "",
 					logs_channel_id: logChannel.id,
 					nuke_detection: true,
 					dox_detection: true,

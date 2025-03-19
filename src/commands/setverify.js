@@ -37,7 +37,7 @@ class UserCommand extends Command {
 			create: {
 				guild_id: interaction.guildId,
 				verified_role_id: verifiedRole.id,
-				logs_channel_id: "NULL" // Adding default value for required field
+				logs_channel_id: "" // Adding default value for required field
 			}
 		});
 

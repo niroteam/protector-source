@@ -11,7 +11,7 @@ class UserCommand extends Command {
 		super(context, {
 			// Any Command options you want here
 			name: 'checkself',
-			description: 'Check if you are in nono server',
+			description: 'Check if you are in blacklisted servers',
 			cooldownDelay: (1000 * 10)
 		});
 	}

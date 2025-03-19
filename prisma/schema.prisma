@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  user_id String @id
+  access_token String
+  refresh_token String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  guilds String @db.LongText
+  exemptFrom String @db.LongText @default("")
+  @@index([updated_at])
+}
+
+model BadServers {
+  guild_id String @id
+  name String
+  reason String @db.LongText
+  extra Json
+}
+
+model Staff {
+  moderator_id String @id
+  is_staff Boolean
+}
+
+model ServerConfig {
+  guild_id String @id
+  verified_role_id String
+  logs_channel_id String
+  nuke_detection Boolean @default(true)
+  dox_detection Boolean @default(true)
+}

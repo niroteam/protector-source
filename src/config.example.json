@@ -1,0 +1,13 @@
+{
+	"discord_token": "",
+	"prefix": "!",
+	"owners": [
+		""
+	],
+	"clientId": "",
+	"clientSecret": "",
+	"DISCORD_REDIRECT_URI": "http://localhost:3500/callback",
+	"JWT_SECRET": "",
+	"support_server": "https://discord.gg/yourinvite",
+	"oauth_link": "https://discord.com/oauth2/authorize?client_id=yourbotid&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3500%2Fcallback&scope=guilds+identify"
+}

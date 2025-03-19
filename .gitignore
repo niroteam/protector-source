@@ -10,7 +10,7 @@ forfivemisrael.md
 # Yarn files
 .yarn/install-state.gz
 .yarn/build-state.yml
-
+.vscode
 # Environment variables
 .DS_Store
 

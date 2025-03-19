@@ -3,12 +3,12 @@ const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 const app = express();
-const port = 3500;
 const config = require("../config.json");
 const { prisma } = require('../lib/prisma');
 const { client } = require("../index");
 const { performance } = require('perf_hooks');
 const Discord = require("discord.js")
+const port = config.port || 3500;
 
 async function insertOrUpdateUserData(userId, guildIds, accessToken, refreshToken) {
     try {
@@ -39,7 +39,7 @@ async function insertOrUpdateUserData(userId, guildIds, accessToken, refreshToke
         throw err;
     }
 }
-async function isUserInBadGuild(userId) {
+async function isUserInBadGuild(guildId, userId) {
     try {
         // Get all guild IDs for this user
         let userGuilds = await prisma.users.findFirst({
@@ -50,24 +50,64 @@ async function isUserInBadGuild(userId) {
                 guilds: true
             }
         });
-        console.log(typeof userGuilds)
-        console.log("User Guilds: ", userGuilds)
 
-        if (!userGuilds || userGuilds.length === 0) return false;
-        // Extract guild IDs into an array
-        const guildIds = JSON.parse(userGuilds.guilds);
-
-        // Check if any of these guilds are in the badServers table
-        const badGuilds = await prisma.badServers.findMany({
+        const guildChoices = await prisma.serverConfig.findFirst({
             where: {
-                guild_id: {
-                    in: guildIds
-                }
+                guild_id: guildId
+            },
+            select: {
+                nuke_detection: true,
+                dox_detection: true,
+                scam_detection: true
             }
         });
 
 
-        return badGuilds.length > 0;
+        if (!userGuilds || !userGuilds.guilds || userGuilds.guilds.length === 0) return false;
+
+        const guildIds = JSON.parse(userGuilds.guilds);
+
+
+        let badGuild = [];
+
+        if (guildChoices.nuke_detection) {
+            let thing = await prisma.badServers.findMany({
+                where: {
+                    guild_id: {
+                        in: guildIds
+                    },
+                    reason: "nuke"
+                },
+            });
+            badGuild = badGuild.concat(thing);
+        }
+
+        if (guildChoices.dox_detection) {
+            let thing = await prisma.badServers.findMany({
+                where: {
+                    guild_id: {
+                        in: guildIds
+                    },
+                    reason: "dox"
+                },
+            });
+            badGuild = badGuild.concat(thing);
+        }
+
+        if (guildChoices.scam_detection) {
+            let thing = await prisma.badServers.findMany({
+                where: {
+                    guild_id: {
+                        in: guildIds
+                    },
+                    reason: "scam"
+                },
+            });
+            badGuild = badGuild.concat(thing);
+        }
+
+
+        return badGuild.length > 0;
     } catch (error) {
         console.error('Error checking if user is in bad guild:', error);
         throw error;
@@ -215,7 +255,6 @@ async function assignVerifiedRole(userId, guildId) {
             }
 
             await member.roles.add(serverConfig.verified_role_id);
-            console.log(`Assigned verified role to user ${userId} in guild ${guildId}`);
             return true;
         } catch (roleError) {
             console.error(`Error assigning role ${serverConfig.verified_role_id} to user ${userId} in ${guildId}:`, roleError);
@@ -272,7 +311,7 @@ app.get('/callback', async (req, res) => {
         await insertOrUpdateUserData(id, userGuilds, response.data.access_token, response.data.refresh_token);
 
         // Check if user is in a bad guild
-        const inBadGuild = await isUserInBadGuild(id);
+        const inBadGuild = await isUserInBadGuild(guildId, id);
 
         if (inBadGuild) {
             // User is in a bad guild, reject verification
@@ -586,7 +625,6 @@ module.exports = {
         });
     },
     updateGuilds,
-    isUserInBadGuild,
     getBadGuilds,
     isServerBlacklisted
 };

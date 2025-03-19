@@ -4,6 +4,7 @@
 	"owners": [
 		""
 	],
+	"port": "3500",
 	"clientId": "",
 	"clientSecret": "",
 	"DISCORD_REDIRECT_URI": "http://localhost:3500/callback",

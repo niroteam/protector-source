@@ -28,15 +28,15 @@ class UserCommand extends Command {
 					.addStringOption(o => o.setName("reason").setDescription("Reason for adding").setRequired(true).addChoices(
 						{
 							name: "Doxing",
-							value: "doxing"
+							value: "dox"
 						},
 						{
 							name: "Scam",
 							value: "scam"
 						},
 						{
-							name: "Illegal",
-							value: "illegal"
+							name: "Nuking",
+							value: "nuke"
 						},
 					))
 		);

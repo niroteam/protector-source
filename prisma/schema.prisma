@@ -36,4 +36,5 @@ model ServerConfig {
   logs_channel_id String
   nuke_detection Boolean @default(true)
   dox_detection Boolean @default(true)
+  scam_detection Boolean @default(true)
 }

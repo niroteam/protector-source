@@ -11,7 +11,7 @@ class UserCommand extends Command {
 		super(context, {
 			// Any Command options you want here
 			name: 'checkuser',
-			description: 'Check if user is in nono servers',
+			description: 'Check if user is in blacklisted servers',
 			cooldownDelay: 1000 * 10 // 10 seconds
 		});
 	}
@@ -47,7 +47,7 @@ class UserCommand extends Command {
 			if (badGuilds.length === 0) {
 				const embed = new Discord.EmbedBuilder()
 					.setTitle('User Check')
-					.setDescription(`❌ **${user.tag}** is not in any nono servers.`)
+					.setDescription(`❌ **${user.tag}** is not in any blacklisted servers.`)
 					.setColor('Green');
 				await interaction.editReply({ embeds: [embed] });
 				return;
@@ -59,7 +59,7 @@ class UserCommand extends Command {
 
 			const embed = new Discord.EmbedBuilder()
 				.setTitle('User Check')
-				.setDescription(`✅ **${user.tag}** is in the following nono servers:\n\n${badGuildsList}`)
+				.setDescription(`✅ **${user.tag}** is in the following blacklisted servers:\n\n${badGuildsList}`)
 				.setColor('Red');
 
 			await interaction.editReply({ embeds: [embed] });
